@@ -6,8 +6,12 @@ class LoginRejectCode(Enum):
     SESSION_NOT_AVAILABLE = b"S"
 
 
-class HeartbeatTimeoutError(Exception):
-    ...
+class HeartbeatTimeoutError(TimeoutError):
+    def __init__(self, elapsed: float):
+        self.elapsed = elapsed
+
+    def __str__(self):
+        f"Received no data from peer for {self.elapsed} seconds"
 
 
 class LoginRejectedError(Exception):
@@ -16,8 +20,12 @@ class LoginRejectedError(Exception):
 
     def __str__(self):
         if self.code == LoginRejectCode.NOT_AUTHORIZED:
-            return "There was an invalid username and password\
-                     combination in the Login Request Message."
+            return (
+                "There was an invalid username and password combination "
+                "in the Login Request Message."
+            )
         elif self.code == LoginRejectCode.SESSION_NOT_AVAILABLE:
-            return "The Requested Session in the Login Request Packet\
-                     was either invalid or not available."
+            return (
+                "The Requested Session in the Login Request Packet "
+                "was either invalid or not available."
+            )
